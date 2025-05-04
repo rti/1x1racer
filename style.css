@@ -1,0 +1,96 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #f4f4f4;
+}
+
+#game-area, #results-area {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+    min-width: 300px;
+}
+
+#progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    height: 20px; /* Adjust height as needed */
+    overflow: hidden; /* Ensure inner bar stays contained */
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%; /* Start with 0% width */
+    background-color: #4caf50; /* Green progress color */
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out; /* Smooth transition */
+    text-align: center; /* Optional: center text if you add it */
+    line-height: 20px; /* Optional: vertically center text */
+    color: white; /* Optional: text color */
+    font-size: 0.8em; /* Optional: text size */
+}
+
+
+#question {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#choices button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 1.1em;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+    transition: background-color 0.2s;
+}
+
+#choices button:hover {
+    background-color: #ddd;
+}
+
+#feedback {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 1.2em; /* Prevent layout shifts */
+}
+
+.correct {
+    color: green;
+}
+
+.wrong {
+    color: red;
+}
+
+#results-area h2 {
+    color: #333;
+}
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+#restart-button:hover {
+    background-color: #0056b3;
+}
