@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Multiplication Game</title>
+    <title>1x1 racer - Multiplication Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-area">
+    <div id="start-screen">
+        <p>Ready to test your multiplication skills?</p>
+        <button id="start-button">Start Game</button>
+    </div>
+
+    <div id="game-area" style="display: none;">
         <div id="progress-container">
             <div id="progress-bar"></div>
         </div>
@@ -20,11 +25,14 @@
 
     <div id="results-area" style="display: none;">
         <h2>You did it!</h2>
-        <p><span id="total-time">0</span> seconds</p>
-        <p><span id="total-errors">0</span> mistakes</p>
+        <p>Mistakes: <span id="total-errors">0</span></p>
+        <p>Your Time: <span id="total-time">0</span> seconds</p>
+        <p id="best-time-message" style="display: none; color: #ff9800; font-weight: bold;">New Best Time!</p>
+        <p>Best Time: <span id="best-time">--</span> seconds</p>
         <button id="restart-button">Play Again</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

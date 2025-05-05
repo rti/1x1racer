@@ -2,7 +2,8 @@
 const MAX_PROBLEMS = 10;
 const MIN_FACTOR = 1;
 const MAX_FACTOR = 10;
-const NUM_CHOICES = 10; // Increased number of choices
+const NUM_CHOICES = 7; // Reduced number of choices
+const BEST_TIME_KEY = 'mathGameBestTime'; // Key for localStorage
 
 // --- Game State Variables ---
 let currentProblemIndex = 0;
@@ -13,15 +14,18 @@ let currentCorrectAnswer = 0;
 let currentQuestion = "";
 
 // --- HTML Element References ---
+const startScreen = document.getElementById('start-screen');
 const gameArea = document.getElementById('game-area');
 const resultsArea = document.getElementById('results-area');
 const progressBarEl = document.getElementById('progress-bar'); // Get progress bar element
-// Removed problemNumberEl and totalProblemsEl
 const questionEl = document.getElementById('question');
 const choicesEl = document.getElementById('choices');
 const feedbackEl = document.getElementById('feedback');
 const totalTimeEl = document.getElementById('total-time');
 const totalErrorsEl = document.getElementById('total-errors');
+const bestTimeEl = document.getElementById('best-time'); // Element for best time display
+const bestTimeMessageEl = document.getElementById('best-time-message'); // Element for new best time message
+const startButton = document.getElementById('start-button');
 const restartButton = document.getElementById('restart-button');
 
 // --- Functions ---
@@ -51,14 +55,15 @@ function generateProblem() {
         const offset = Math.floor(Math.random() * (2 * offsetFactor + 1)) - offsetFactor; // e.g., -5 to +5 if offsetFactor is 5
         let wrongAnswer = correctAnswer + offset;
 
-        // Ensure wrong answer is not the correct answer and is non-negative
-        if (wrongAnswer !== correctAnswer && wrongAnswer >= 0) {
+        // Ensure wrong answer is not the correct answer, is non-negative, and <= 100
+        if (wrongAnswer !== correctAnswer && wrongAnswer >= 0 && wrongAnswer <= 100) {
             choices.add(wrongAnswer);
         }
-        // Add a simple random wrong answer if generation gets stuck
+        // Add a simple random wrong answer if generation gets stuck, ensuring it's <= 100
         if (choices.size < NUM_CHOICES && Math.random() > 0.8) {
-             let randomWrong = Math.floor(Math.random() * (MAX_FACTOR * MAX_FACTOR + 1));
-             if (randomWrong !== correctAnswer) choices.add(randomWrong);
+             let randomWrong = Math.floor(Math.random() * (MAX_FACTOR * MAX_FACTOR + 1)); // Max possible correct answer is 100
+             // Ensure the random wrong answer is also <= 100 and not the correct one
+             if (randomWrong !== correctAnswer && randomWrong <= 100) choices.add(randomWrong);
         }
     }
 
@@ -142,16 +147,44 @@ function disableChoiceButtons(disabled) {
 /** Ends the game and displays results */
 function endGame() {
     const endTime = Date.now();
-    const totalTime = Math.round((endTime - startTime) / 1000); // Time in seconds
+    const totalTimeSeconds = (endTime - startTime) / 1000; // Time in seconds
 
-    totalTimeEl.textContent = totalTime;
+    const currentTimeFormatted = totalTimeSeconds.toFixed(2);
+    totalTimeEl.textContent = currentTimeFormatted;
     totalErrorsEl.textContent = errors;
 
-    gameArea.style.display = 'none';
-    resultsArea.style.display = 'block';
+    // --- Best Time Logic ---
+    const bestTime = localStorage.getItem(BEST_TIME_KEY);
+    let isNewBestTime = false;
+
+    if (bestTime === null || totalTimeSeconds < parseFloat(bestTime)) {
+        // New best time or no previous best time
+        localStorage.setItem(BEST_TIME_KEY, totalTimeSeconds.toString());
+        bestTimeEl.textContent = currentTimeFormatted;
+        bestTimeMessageEl.style.display = 'block'; // Show "New Best Time!" message
+        isNewBestTime = true;
+    } else {
+        // Not a new best time, display the stored best time
+        bestTimeEl.textContent = parseFloat(bestTime).toFixed(2);
+        bestTimeMessageEl.style.display = 'none'; // Hide message
+    }
+    // --- End Best Time Logic ---
+
+
+    gameArea.style.display = 'none'; // Hide game area
+    resultsArea.style.display = 'block'; // Show results area
+
+    // Trigger confetti effect (maybe enhance for new best time?)
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 150, // More particles
+            spread: 90,      // Wider spread
+            origin: { y: 0.3 } // Start slightly higher than center
+        });
+    }
 }
 
-/** Starts or restarts the game */
+/** Sets up and starts a new game */
 function startGame() {
     currentProblemIndex = 0;
     errors = 0;
@@ -161,8 +194,6 @@ function startGame() {
     }
     startTime = Date.now();
 
-    resultsArea.style.display = 'none';
-    gameArea.style.display = 'block';
     // Reset progress bar for new game
     progressBarEl.style.width = '0%';
     // Removed totalProblemsEl update
@@ -171,7 +202,20 @@ function startGame() {
 }
 
 // --- Event Listeners ---
-restartButton.addEventListener('click', startGame);
+startButton.addEventListener('click', () => {
+    startScreen.style.display = 'none'; // Hide start screen
+    gameArea.style.display = 'block'; // Show game area
+    resultsArea.style.display = 'none'; // Ensure results are hidden
+    bestTimeMessageEl.style.display = 'none'; // Hide message on start
+    startGame(); // Initialize and start the actual game logic
+});
 
-// --- Initial Game Start ---
-startGame();
+restartButton.addEventListener('click', () => {
+    resultsArea.style.display = 'none'; // Hide results screen
+    gameArea.style.display = 'block'; // Show game area
+    bestTimeMessageEl.style.display = 'none'; // Hide message on restart
+    startGame(); // Re-initialize and start a new game
+});
+
+// --- Initial Setup ---
+// Game no longer starts automatically. Waits for start button click.

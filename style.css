@@ -7,7 +7,7 @@ body {
     background-color: #f4f4f4;
 }
 
-#game-area, #results-area {
+#start-screen, #game-area, #results-area {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -93,4 +93,19 @@ body {
 
 #restart-button:hover {
     background-color: #0056b3;
+}
+
+#start-button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #28a745; /* Green color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#start-button:hover {
+    background-color: #218838;
 }
